@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!--
+		SEO de base à personnaliser avant publication
+
+		À remplacer :
+		- [FULL_NAME] : nom complet affiché dans le title et l’auteur.
+		- [JOB_TITLE] : intitulé principal du profil.
+		- [SEO_DESCRIPTION] : court résumé du portfolio pour les moteurs de recherche.
+
+		À laisser tel quel pour l’instant :
+		- robots="noindex, nofollow" tant que le site n’est pas finalisé et publié.
+		- theme-color : mis à jour automatiquement par le script de thème.
+		- favicon.svg : le fichier dans assets/images peut être personnalisé directement, par exemple pour changer la lettre ou le style de l’icône.
+
+		À ajouter plus tard :
+		- La balise canonical uniquement quand l’URL finale du site est connue.
+		Exemple :
+		<link rel="canonical" href="https://example.com/">
+		Ne pas laisser href vide. Remplacer impérativement example.com.
+
+		À faire :
+		- Remplacer aussi tous les liens de contact, de réseaux sociaux et les contenus entre crochets avant publication.
+
+		Le template évite volontairement les fausses URLs de publication et les réglages SEO risqués par défaut.
+	-->
+	<title>[FULL_NAME] — [JOB_TITLE] | Portfolio</title>
+	<meta name="description" content="[SEO_DESCRIPTION]">
+	<meta name="author" content="[FULL_NAME]">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="theme-color" id="themeColorMeta" content="#f3efe9">
+	<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+
+	<!--
+		Open Graph : aperçu du site lors d’un partage sur LinkedIn, Facebook, Discord et d’autres plateformes.
+
+		À conserver :
+		- og:type="website" pour un portfolio.
+		- og:locale="fr_FR" si le site est principalement en français.
+
+		À remplacer :
+		- [FULL_NAME]
+		- [JOB_TITLE]
+		- [SEO_DESCRIPTION]
+
+		À ajouter quand le site est prêt à être partagé :
+		- og:image : image d’aperçu publique.
+		- og:url : adresse publique exacte du site.
+
+		Exemples :
+		<meta property="og:image" content="https://example.com/assets/images/seo-image.jpg">
+		<meta property="og:url" content="https://example.com/">
+
+		Remplacer impérativement example.com et seo-image.jpg.
+	-->
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="[FULL_NAME] — [JOB_TITLE] | Portfolio">
+	<meta property="og:description" content="[SEO_DESCRIPTION]">
+	<meta property="og:locale" content="fr_FR">
+
+	<!--
+		Twitter Cards : aperçu du site sur X / Twitter.
+
+		À conserver :
+		- twitter:card="summary_large_image" pour afficher une grande image d’aperçu.
+
+		À remplacer :
+		- [FULL_NAME]
+		- [JOB_TITLE]
+		- [SEO_DESCRIPTION]
+
+		À ajouter quand l’image de partage est prête :
+		<meta name="twitter:image" content="https://example.com/assets/images/seo-image.jpg">
+
+		Remplacer impérativement example.com et seo-image.jpg.
+	-->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="[FULL_NAME] — [JOB_TITLE] | Portfolio">
+	<meta name="twitter:description" content="[SEO_DESCRIPTION]">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+		rel="stylesheet"
+	>
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+	>
+	<script>
+	document.documentElement.classList.remove('no-js');
+	</script>
+	<link rel="stylesheet" href="assets/css/style.css">
+	<!--
+		Gestion du thème :
+		- Clair / sombre seulement
+		- Les couleurs viennent de style.css
+		- Pour changer theme-color, modifier les variables CSS theme-color-light et theme-color-dark
+		- Si ces noms des variables changent, mettre à jour updateThemeMeta() dans assets/js/script.js
+	-->
+	<script>
+		(() => {
+			const root = document.documentElement;
+			const metaThemeColor = document.getElementById('themeColorMeta');
+			let theme = null;
+
+			try {
+				const storedTheme = localStorage.getItem('theme');
+				if (storedTheme === 'light' || storedTheme === 'dark') {
+					theme = storedTheme;
+				}
+			} catch (error) {
+				/* localStorage peut être indisponible selon le contexte */
+			}
+
+			if (!theme) {
+				theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+			}
+
+			root.setAttribute('data-theme', theme);
+
+			const themeColor = window.getComputedStyle(root).getPropertyValue(`--theme-color-${theme}`).trim();
+			if (metaThemeColor && themeColor) {
+				metaThemeColor.setAttribute('content', themeColor);
+			}
+		})();
+	</script>
+</head>
+<body>
+	<a class="skip-link" href="#mainContent">Aller au contenu principal</a>
+	<!--
+		Fichier : index.html
+		Rôle : structure principale du template portfolio
+
+		Sommaire :
+		1. Carte latérale
+		2. Navigation par onglets
+		3. Sections de contenu
+		4. Scripts externes
+	-->
+	<main class="page-shell" id="mainContent" tabindex="-1">
+		<div class="portfolio-card">
+			<div class="portfolio-grid">
+				<!-- 1. Carte latérale -->
+				<aside class="sidebar-panel" aria-label="Informations de profil">
+					<div class="identity-stack">
+						<div class="avatar-wrap">
+							<!-- Ajouter une image de profil dans assets/images et adapter le nom du fichier ci-dessous -->
+							<img
+								class="avatar-image"
+								src="assets/images/profile-image.webp"
+								alt="Portrait de [FULL_NAME]"
+								width="168"
+								height="168"
+							>
+							<div class="avatar-placeholder" role="img" aria-label="Emplacement de l'image de profil" hidden>
+								<i data-lucide="image" aria-hidden="true"></i>
+								<span>Ajouter une image dans assets/images/</span>
+								<small>[PROFILE_IMAGE]</small>
+							</div>
+						</div>
+
+						<div class="identity-heading">
+							<h1>[FULL_NAME]</h1>
+							<p>[JOB_TITLE]</p>
+							<div class="badge-row centered">
+								<span class="badge badge-primary-soft">[EXPERTISE_1]</span>
+								<span class="badge badge-secondary-soft">[EXPERTISE_2]</span>
+								<span class="badge badge-tertiary-soft">[EXPERTISE_3]</span>
+							</div>
+						</div>
+
+						<div class="contact-mini-list">
+							<div class="mini-item">
+								<i data-lucide="mail" aria-hidden="true"></i>
+								<button class="link-button email-link" type="button" data-open-tab="contact">
+									Me contacter
+								</button>
+								<noscript>
+									<a class="link-button email-link" href="#tab-contact">Me contacter</a>
+								</noscript>
+							</div>
+							<div class="mini-item">
+								<i data-lucide="map-pin" aria-hidden="true"></i>
+								<span>[LOCATION], [AREA]</span>
+							</div>
+						</div>
+
+						<!-- Remplacer chaque lien par vos vraies adresses avant publication -->
+						<nav class="social-links" aria-label="Réseaux sociaux et site web">
+							<a href="https://linkedin.com/in/username" aria-label="LinkedIn" target="_blank" rel="noreferrer noopener">
+								<i data-lucide="linkedin" aria-hidden="true"></i>
+								<span class="social-link-label" hidden>LinkedIn</span>
+							</a>
+							<a href="https://github.com/username" aria-label="GitHub" target="_blank" rel="noreferrer noopener">
+								<i data-lucide="github" aria-hidden="true"></i>
+								<span class="social-link-label" hidden>GitHub</span>
+							</a>
+							<a href="https://example.com" aria-label="Site web" target="_blank" rel="noreferrer noopener">
+								<i data-lucide="globe" aria-hidden="true"></i>
+								<span class="social-link-label" hidden>Site Web</span>
+							</a>
+						</nav>
+
+						<div class="availability-pill">
+							<span class="avail-dot" aria-hidden="true"></span>
+							Disponible stage / alternance
+						</div>
+
+						<button
+							class="button button-outline theme-toggle"
+							id="themeToggle"
+							type="button"
+							aria-label="Thème : clair"
+							title="Thème : clair"
+						>
+							<i data-lucide="moon" class="icon-moon hidden" aria-hidden="true"></i>
+							<i data-lucide="sun" class="icon-sun" aria-hidden="true"></i>
+						</button>
+					</div>
+				</aside>
+
+				<!-- 2. Contenu principal -->
+				<div class="content-panel">
+					<div class="tabs" data-tabs>
+						<noscript>
+							<p class="noscript-note" role="status">JavaScript est désactivé : toutes les sections restent visibles et les cartes projet redirigent vers les fiches détaillées affichées plus bas.</p>
+						</noscript>
+						<div class="tabs-list" role="tablist" aria-label="Sections du portfolio">
+							<div class="tab-indicator" aria-hidden="true"></div>
+							<button
+								class="tab-trigger active"
+								type="button"
+								role="tab"
+								tabindex="0"
+								aria-selected="true"
+								aria-controls="tab-about"
+								id="trigger-about"
+								data-tab-target="about"
+							>
+								À propos
+							</button>
+							<button
+								class="tab-trigger"
+								type="button"
+								role="tab"
+								tabindex="-1"
+								aria-selected="false"
+								aria-controls="tab-projects"
+								id="trigger-projects"
+								data-tab-target="projects"
+							>
+								Projets
+							</button>
+							<button
+								class="tab-trigger"
+								type="button"
+								role="tab"
+								tabindex="-1"
+								aria-selected="false"
+								aria-controls="tab-skills"
+								id="trigger-skills"
+								data-tab-target="skills"
+							>
+								Compétences
+							</button>
+							<button
+								class="tab-trigger"
+								type="button"
+								role="tab"
+								tabindex="-1"
+								aria-selected="false"
+								aria-controls="tab-journey"
+								id="trigger-journey"
+								data-tab-target="journey"
+							>
+								Parcours
+							</button>
+							<button
+								class="tab-trigger"
+								type="button"
+								role="tab"
+								tabindex="-1"
+								aria-selected="false"
+								aria-controls="tab-contact"
+								id="trigger-contact"
+								data-tab-target="contact"
+							>
+								Contact
+							</button>
+						</div>
+
+						<!-- 3. À propos -->
+						<section class="tab-panel active" id="tab-about" role="tabpanel" aria-labelledby="trigger-about" tabindex="-1">
+							<div class="section-block">
+								<h2>Qui suis-je</h2>
+								<p class="lead-text">
+									Renseigner ici une présentation courte de 4 à 5 lignes. Le texte peut résumer le profil,
+									le positionnement, les objectifs professionnels et l'approche de travail.
+								</p>
+							</div>
+
+							<section class="internship-card">
+								<div class="section-inline-title">
+									<i data-lucide="briefcase" aria-hidden="true"></i>
+									<h3>Recherche de Stage / Alternance</h3>
+								</div>
+								<p>
+									Préciser ici le type d’opportunité recherchée, la période visée et le cadre souhaité.
+									Ce bloc sert à donner une lecture rapide de la disponibilité.
+								</p>
+								<div class="info-grid">
+									<div class="info-item">
+										<i data-lucide="calendar" aria-hidden="true"></i>
+										<div>
+											<span class="info-label">Dates</span>
+											<p>[AVAILABILITY_PERIOD]</p>
+										</div>
+									</div>
+									<div class="info-item">
+										<i data-lucide="hourglass" aria-hidden="true"></i>
+										<div>
+											<span class="info-label">Durée</span>
+											<p>[AVAILABILITY_DURATION]</p>
+										</div>
+									</div>
+									<div class="info-item">
+										<i data-lucide="map-pinned" aria-hidden="true"></i>
+										<div>
+											<span class="info-label">Localisation</span>
+											<p>[TARGET_LOCATION]</p>
+										</div>
+									</div>
+									<div class="info-item">
+										<i data-lucide="laptop" aria-hidden="true"></i>
+										<div>
+											<span class="info-label">Format</span>
+											<p>[WORK_FORMAT]</p>
+										</div>
+									</div>
+								</div>
+								<div class="objective-card">
+									<div class="objective-head">
+										<i data-lucide="target" aria-hidden="true"></i>
+										<div>
+											<h4>Objectif</h4>
+											<p>
+												Expliquer ici ce que vous souhaitez développer, le type de missions visées et
+												la valeur qu’elle veut apporter dans un futur stage ou une alternance.
+											</p>
+										</div>
+									</div>
+								</div>
+							</section>
+
+							<div class="section-block">
+								<h3>Mes domaines de spécialisation</h3>
+								<div class="specialization-grid">
+									<article class="special-card special-primary">
+										<div class="special-head">
+											<span class="special-icon"><i data-lucide="monitor-check" aria-hidden="true"></i></span>
+											<h4>Domaine 1</h4>
+										</div>
+										<p>
+											Décrire ici une première spécialité, ce qu’elle recouvre et le type de missions associées.
+										</p>
+									</article>
+									<article class="special-card special-secondary">
+										<div class="special-head">
+											<span class="special-icon"><i data-lucide="drafting-compass" aria-hidden="true"></i></span>
+											<h4>Domaine 2</h4>
+										</div>
+										<p>
+											Présenter ici un second domaine de compétence avec une explication courte et concrète.
+										</p>
+									</article>
+									<article class="special-card special-tertiary">
+										<div class="special-head">
+											<span class="special-icon"><i data-lucide="images" aria-hidden="true"></i></span>
+											<h4>Domaine 3</h4>
+										</div>
+										<p>
+											Ajouter ici un troisième axe de spécialisation pour compléter le positionnement du profil.
+										</p>
+									</article>
+								</div>
+							</div>
+
+							<div class="section-block">
+								<h3>Mes piliers</h3>
+								<div class="values-list">
+									<article class="value-item">
+										<span class="value-icon primary"><i data-lucide="heart" aria-hidden="true"></i></span>
+										<div>
+											<h4>Valeur 1</h4>
+											<p>Expliquer en 2 lignes une première valeur ou une manière de travailler.</p>
+										</div>
+									</article>
+									<article class="value-item">
+										<span class="value-icon secondary"><i data-lucide="users" aria-hidden="true"></i></span>
+										<div>
+											<h4>Valeur 2</h4>
+											<p>Résumer ici un deuxième pilier utile pour comprendre le profil.</p>
+										</div>
+									</article>
+									<article class="value-item">
+										<span class="value-icon tertiary"><i data-lucide="lightbulb" aria-hidden="true"></i></span>
+										<div>
+											<h4>Valeur 3</h4>
+											<p>Ajouter ici une dernière valeur qui complète la posture professionnelle.</p>
+										</div>
+									</article>
+								</div>
+							</div>
+						</section>
+
+						<!-- 4. Projets -->
+						<section class="tab-panel" id="tab-projects" role="tabpanel" aria-labelledby="trigger-projects" hidden tabindex="-1">
+							<div id="projectsListView" class="section-block compact-top">
+								<h2>Projets</h2>
+								<p class="lead-text">
+									Chaque carte peut être remplacée par un projet réel. Donner un titre, un type de projet,
+									une image et un résumé court pour faciliter le scan rapide.
+								</p>
+								<div class="project-list" id="projectList" data-js-list>
+									<article class="project-card">
+										<span class="project-card-number" aria-hidden="true">01</span>
+										<div class="project-media-frame">
+											<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+											<img
+												class="project-media-image"
+												src="assets/images/project-01-preview.webp" 
+												alt="Aperçu du projet [PROJECT_TITLE_01]"
+												loading="lazy"
+												width="960"
+												height="640"
+												hidden
+											>
+											<div class="project-media-fallback" aria-hidden="true">
+												<i data-lucide="image" aria-hidden="true"></i>
+												<strong>[PROJECT_IMAGE_01]</strong>
+												<small>Ajouter une image dans assets/images/</small>
+											</div>
+										</div>
+										<div class="project-card-body">
+											<div class="project-card-head">
+												<h3>[PROJECT_TITLE_01]</h3>
+												<span class="badge badge-outline">[PROJECT_TYPE_01]</span>
+											</div>
+											<p>Ajouter ici un résumé court du projet, de son objectif principal et sa valeur ajoutée.</p>
+											<button class="project-link" type="button" data-project-trigger="1" aria-label="Ouvrir [PROJECT_TITLE_01]" aria-controls="project-01">Voir le projet</button>
+											<noscript>
+												<a class="project-link" href="#project-01" aria-label="Aller au projet [PROJECT_TITLE_01]">Voir le projet</a>
+											</noscript>
+										</div>
+									</article>
+
+									<article class="project-card">
+										<span class="project-card-number" aria-hidden="true">02</span>
+										<div class="project-media-frame">
+											<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+											<img
+												class="project-media-image"
+												src="assets/images/project-02-preview.webp"
+												alt="Aperçu du projet [PROJECT_TITLE_02]"
+												loading="lazy"
+												width="960"
+												height="640"
+												hidden
+											>
+											<div class="project-media-fallback" aria-hidden="true">
+												<i data-lucide="image" aria-hidden="true"></i>
+												<strong>[PROJECT_IMAGE_02]</strong>
+												<small>Ajouter une image dans assets/images/</small>
+											</div>
+										</div>
+										<div class="project-card-body">
+											<div class="project-card-head">
+												<h3>[PROJECT_TITLE_02]</h3>
+												<span class="badge badge-outline">[PROJECT_TYPE_02]</span>
+											</div>
+											<p>Ajouter ici un résumé court du projet, de son objectif principal et sa valeur ajoutée.</p>
+											<button class="project-link" type="button" data-project-trigger="2" aria-label="Ouvrir [PROJECT_TITLE_02]" aria-controls="project-02">Voir le projet</button>
+											<noscript>
+												<a class="project-link" href="#project-02" aria-label="Aller au projet [PROJECT_TITLE_02]">Voir le projet</a>
+											</noscript>
+										</div>
+									</article>
+
+									<article class="project-card">
+										<span class="project-card-number" aria-hidden="true">03</span>
+										<div class="project-media-frame">
+											<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+											<img
+												class="project-media-image"
+												src="assets/images/project-03-preview.webp"
+												alt="Aperçu du projet [PROJECT_TITLE_03]"
+												loading="lazy"
+												width="960"
+												height="640"
+												hidden
+											>
+											<div class="project-media-fallback" aria-hidden="true">
+												<i data-lucide="image" aria-hidden="true"></i>
+												<strong>[PROJECT_IMAGE_03]</strong>
+												<small>Ajouter une image dans assets/images/</small>
+											</div>
+										</div>
+										<div class="project-card-body">
+											<div class="project-card-head">
+												<h3>[PROJECT_TITLE_03]</h3>
+												<span class="badge badge-outline">[PROJECT_TYPE_03]</span>
+											</div>
+											<p>Ajouter ici un résumé court du projet, de son objectif principal et sa valeur ajoutée.</p>
+											<button class="project-link" type="button" data-project-trigger="3" aria-label="Ouvrir [PROJECT_TITLE_03]" aria-controls="project-03">Voir le projet</button>
+											<noscript>
+												<a class="project-link" href="#project-03" aria-label="Aller au projet [PROJECT_TITLE_03]">Voir le projet</a>
+											</noscript>
+										</div>
+									</article>
+
+									<article class="project-card">
+										<span class="project-card-number" aria-hidden="true">04</span>
+										<div class="project-media-frame">
+											<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+											<img
+												class="project-media-image"
+												src="assets/images/project-04-preview.webp"
+												alt="Aperçu du projet [PROJECT_TITLE_04]"
+												loading="lazy"
+												width="960"
+												height="640"
+												hidden
+											>
+											<div class="project-media-fallback" aria-hidden="true">
+												<i data-lucide="image" aria-hidden="true"></i>
+												<strong>[PROJECT_IMAGE_04]</strong>
+												<small>Ajouter une image dans assets/images/</small>
+											</div>
+										</div>
+										<div class="project-card-body">
+											<div class="project-card-head">
+												<h3>[PROJECT_TITLE_04]</h3>
+												<span class="badge badge-outline">[PROJECT_TYPE_04]</span>
+											</div>
+											<p>Ajouter ici un résumé court du projet, de son objectif principal et sa valeur ajoutée.</p>
+											<button class="project-link" type="button" data-project-trigger="4" aria-label="Ouvrir [PROJECT_TITLE_04]" aria-controls="project-04">Voir le projet</button>
+											<noscript>
+												<a class="project-link" href="#project-04" aria-label="Aller au projet [PROJECT_TITLE_04]">Voir le projet</a>
+											</noscript>
+										</div>
+									</article>
+								</div>
+							</div>
+
+							<div id="projectDetailView" class="hidden project-detail-view">
+								<article class="project-detail-page hidden" id="project-01" data-project-detail="1" hidden>
+									<button class="project-back-btn" type="button" data-close-projects>
+										<i data-lucide="arrow-left" aria-hidden="true"></i>
+										Retour aux projets
+									</button>
+
+									<div class="project-detail-header">
+										<h2>[PROJECT_TITLE_01]</h2>
+										<div class="badge-row">
+											<span class="badge badge-outline">[PROJECT_TYPE_01]</span>
+											<span class="badge badge-muted">[PROJECT_ROLE_01]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-media">
+										<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+										<img
+											class="project-media-image"
+											src="assets/images/project-01-preview.webp"
+											alt="Aperçu du projet [PROJECT_TITLE_01]"
+											loading="lazy"
+											width="960"
+											height="640"
+											hidden
+										>
+										<div class="project-media-fallback" aria-hidden="true">
+											<i data-lucide="image" aria-hidden="true"></i>
+											<strong>[PROJECT_IMAGE_01]</strong>
+											<small>Ajouter ici le visuel principal du projet</small>
+										</div>
+									</div>
+
+									<div class="project-detail-grid">
+										<div class="project-info-card">
+											<span class="info-card-label">Type</span>
+											<p>[PROJECT_TYPE_01]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Date</span>
+											<p>[PROJECT_DATE_01]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Cadre</span>
+											<p>[PROJECT_SETTING_01]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Rôle</span>
+											<p>[PROJECT_ROLE_01]</p>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Contexte</h3>
+										<p>Décrire ici le contexte du projet, le besoin de départ, le public concerné et le cadre de réalisation.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Description</h3>
+										<p>Présenter ici le projet de manière synthétique : besoin, réponse apportée et rôle tenu.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Objectifs</h3>
+										<ul class="objectives-list">
+											<li>Indiquer 2 à 4 objectifs clairs et concrets.</li>
+											<li>Présenter ici les enjeux principaux du projet.</li>
+											<li>Ajouter un objectif lié à l’usage, au design ou à la communication.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Outils mobilisés</h3>
+										<div class="badge-row">
+											<span class="badge badge-muted">[TOOL_01]</span>
+											<span class="badge badge-muted">[TOOL_02]</span>
+											<span class="badge badge-muted">[TOOL_03]</span>
+											<span class="badge badge-muted">[TOOL_04]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Résultats</h3>
+										<ul class="achievement-list">
+											<li>Ajouter un résultat, un impact, une amélioration ou un apprentissage.</li>
+											<li>Préciser ici un indicateur mesurable ou une réalisation notable.</li>
+											<li>Conserver des formulations courtes et faciles à scanner.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Livrables</h3>
+										<!--
+											Tant qu’un livrable n’est pas prêt, laisser le span désactivé.
+											Quand le fichier ou l’URL est prêt, remplacer le span par un lien <a>.
+
+											Exemple fichier local :
+											<a class="deliverable-link" href="assets/docs/nom-du-fichier.pdf" target="_blank" rel="noreferrer noopener">
+
+											Exemple lien externe :
+											<a class="deliverable-link" href="https://example.com/mon-livrable" target="_blank" rel="noreferrer noopener">
+										-->
+										<ul class="deliverables-list">
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="file-text" aria-hidden="true"></i>
+													[DELIVERABLE_01]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="layout" aria-hidden="true"></i>
+													[DELIVERABLE_02]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="image" aria-hidden="true"></i>
+													[DELIVERABLE_03]
+												</span>
+											</li>
+										</ul>
+									</div>
+								</article>
+
+								<article class="project-detail-page hidden" id="project-02" data-project-detail="2" hidden>
+									<button class="project-back-btn" type="button" data-close-projects>
+										<i data-lucide="arrow-left" aria-hidden="true"></i>
+										Retour aux projets
+									</button>
+
+									<div class="project-detail-header">
+										<h2>[PROJECT_TITLE_02]</h2>
+										<div class="badge-row">
+											<span class="badge badge-outline">[PROJECT_TYPE_02]</span>
+											<span class="badge badge-muted">[PROJECT_ROLE_02]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-media">
+										<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+										<img
+											class="project-media-image"
+											src="assets/images/project-02-preview.webp"
+											alt="Aperçu du projet [PROJECT_TITLE_02]"
+											loading="lazy"
+											width="960"
+											height="640"
+											hidden
+										>
+										<div class="project-media-fallback" aria-hidden="true">
+											<i data-lucide="image" aria-hidden="true"></i>
+											<strong>[PROJECT_IMAGE_02]</strong>
+											<small>Ajouter ici le visuel principal du projet</small>
+										</div>
+									</div>
+
+									<div class="project-detail-grid">
+										<div class="project-info-card">
+											<span class="info-card-label">Type</span>
+											<p>[PROJECT_TYPE_02]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Date</span>
+											<p>[PROJECT_DATE_02]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Cadre</span>
+											<p>[PROJECT_SETTING_02]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Rôle</span>
+											<p>[PROJECT_ROLE_02]</p>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Contexte</h3>
+										<p>Décrire ici le contexte du projet, le besoin de départ, le public concerné et le cadre de réalisation.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Description</h3>
+										<p>Présenter ici le projet de manière synthétique : besoin, réponse apportée et rôle tenu.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Objectifs</h3>
+										<ul class="objectives-list">
+											<li>Indiquer 2 à 4 objectifs clairs et concrets.</li>
+											<li>Présenter ici les enjeux principaux du projet.</li>
+											<li>Ajouter un objectif lié à l’usage, au design ou à la communication.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Outils mobilisés</h3>
+										<div class="badge-row">
+											<span class="badge badge-muted">[TOOL_05]</span>
+											<span class="badge badge-muted">[TOOL_06]</span>
+											<span class="badge badge-muted">[TOOL_07]</span>
+											<span class="badge badge-muted">[TOOL_08]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Résultats</h3>
+										<ul class="achievement-list">
+											<li>Ajouter un résultat, un impact, une amélioration ou un apprentissage.</li>
+											<li>Préciser ici un indicateur mesurable ou une réalisation notable.</li>
+											<li>Conserver des formulations courtes et faciles à scanner.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Livrables</h3>
+										<!--
+											Tant qu’un livrable n’est pas prêt, laisser le span désactivé.
+											Quand le fichier ou l’URL est prêt, remplacer le span par un lien <a>.
+
+											Exemple fichier local :
+											<a class="deliverable-link" href="assets/docs/nom-du-fichier.pdf" target="_blank" rel="noreferrer noopener">
+
+											Exemple lien externe :
+											<a class="deliverable-link" href="https://example.com/mon-livrable" target="_blank" rel="noreferrer noopener">
+										-->
+										<ul class="deliverables-list">
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="file-text" aria-hidden="true"></i>
+													[DELIVERABLE_04]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="layout" aria-hidden="true"></i>
+													[DELIVERABLE_05]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="folder" aria-hidden="true"></i>
+													[DELIVERABLE_06]
+												</span>
+											</li>
+										</ul>
+									</div>
+								</article>
+
+								<article class="project-detail-page hidden" id="project-03" data-project-detail="3" hidden>
+									<button class="project-back-btn" type="button" data-close-projects>
+										<i data-lucide="arrow-left" aria-hidden="true"></i>
+										Retour aux projets
+									</button>
+
+									<div class="project-detail-header">
+										<h2>[PROJECT_TITLE_03]</h2>
+										<div class="badge-row">
+											<span class="badge badge-outline">[PROJECT_TYPE_03]</span>
+											<span class="badge badge-muted">[PROJECT_ROLE_03]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-media">
+										<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+										<img
+											class="project-media-image"
+											src="assets/images/project-03-preview.webp"
+											alt="Aperçu du projet [PROJECT_TITLE_03]"
+											loading="lazy"
+											width="960"
+											height="640"
+											hidden
+										>
+										<div class="project-media-fallback" aria-hidden="true">
+											<i data-lucide="image" aria-hidden="true"></i>
+											<strong>[PROJECT_IMAGE_03]</strong>
+											<small>Ajouter ici le visuel principal du projet</small>
+										</div>
+									</div>
+
+									<div class="project-detail-grid">
+										<div class="project-info-card">
+											<span class="info-card-label">Type</span>
+											<p>[PROJECT_TYPE_03]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Date</span>
+											<p>[PROJECT_DATE_03]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Cadre</span>
+											<p>[PROJECT_SETTING_03]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Rôle</span>
+											<p>[PROJECT_ROLE_03]</p>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Contexte</h3>
+										<p>Décrire ici le contexte du projet, le besoin de départ, le public concerné et le cadre de réalisation.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Description</h3>
+										<p>Présenter ici le projet de manière synthétique : besoin, réponse apportée et rôle tenu.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Objectifs</h3>
+										<ul class="objectives-list">
+											<li>Indiquer 2 à 4 objectifs clairs et concrets.</li>
+											<li>Présenter ici les enjeux principaux du projet.</li>
+											<li>Ajouter un objectif lié à l’usage, au design ou à la communication.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Outils mobilisés</h3>
+										<div class="badge-row">
+											<span class="badge badge-muted">[TOOL_09]</span>
+											<span class="badge badge-muted">[TOOL_10]</span>
+											<span class="badge badge-muted">[TOOL_11]</span>
+											<span class="badge badge-muted">[TOOL_12]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Résultats</h3>
+										<ul class="achievement-list">
+											<li>Ajouter un résultat, un impact, une amélioration ou un apprentissage.</li>
+											<li>Préciser ici un indicateur mesurable ou une réalisation notable.</li>
+											<li>Conserver des formulations courtes et faciles à scanner.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Livrables</h3>
+										<!--
+											Tant qu’un livrable n’est pas prêt, laisser le span désactivé.
+											Quand le fichier ou l’URL est prêt, remplacer le span par un lien <a>.
+
+											Exemple fichier local :
+											<a class="deliverable-link" href="assets/docs/nom-du-fichier.pdf" target="_blank" rel="noreferrer noopener">
+
+											Exemple lien externe :
+											<a class="deliverable-link" href="https://example.com/mon-livrable" target="_blank" rel="noreferrer noopener">
+										-->
+										<ul class="deliverables-list">
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="file-text" aria-hidden="true"></i>
+													[DELIVERABLE_07]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="palette" aria-hidden="true"></i>
+													[DELIVERABLE_08]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="link" aria-hidden="true"></i>
+													[DELIVERABLE_09]
+												</span>
+											</li>
+										</ul>
+									</div>
+								</article>
+
+								<article class="project-detail-page hidden" id="project-04" data-project-detail="4" hidden>
+									<button class="project-back-btn" type="button" data-close-projects>
+										<i data-lucide="arrow-left" aria-hidden="true"></i>
+										Retour aux projets
+									</button>
+
+									<div class="project-detail-header">
+										<h2>[PROJECT_TITLE_04]</h2>
+										<div class="badge-row">
+											<span class="badge badge-outline">[PROJECT_TYPE_04]</span>
+											<span class="badge badge-muted">[PROJECT_ROLE_04]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-media">
+										<!-- Ajouter l’image du projet dans assets/images et adapter le nom du fichier ci-dessous -->
+										<img
+											class="project-media-image"
+											src="assets/images/project-04-preview.webp"
+											alt="Aperçu du projet [PROJECT_TITLE_04]"
+											loading="lazy"
+											width="960"
+											height="640"
+											hidden
+										>
+										<div class="project-media-fallback" aria-hidden="true">
+											<i data-lucide="image" aria-hidden="true"></i>
+											<strong>[PROJECT_IMAGE_04]</strong>
+											<small>Ajouter ici le visuel principal du projet</small>
+										</div>
+									</div>
+
+									<div class="project-detail-grid">
+										<div class="project-info-card">
+											<span class="info-card-label">Type</span>
+											<p>[PROJECT_TYPE_04]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Date</span>
+											<p>[PROJECT_DATE_04]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Cadre</span>
+											<p>[PROJECT_SETTING_04]</p>
+										</div>
+										<div class="project-info-card">
+											<span class="info-card-label">Rôle</span>
+											<p>[PROJECT_ROLE_04]</p>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Contexte</h3>
+										<p>Décrire ici le contexte du projet, le besoin de départ, le public concerné et le cadre de réalisation.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Description</h3>
+										<p>Présenter ici le projet de manière synthétique : besoin, réponse apportée et rôle tenu.</p>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Objectifs</h3>
+										<ul class="objectives-list">
+											<li>Indiquer 2 à 4 objectifs clairs et concrets.</li>
+											<li>Présenter ici les enjeux principaux du projet.</li>
+											<li>Ajouter un objectif lié à l’usage, au design ou à la communication.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Outils mobilisés</h3>
+										<div class="badge-row">
+											<span class="badge badge-muted">[TOOL_13]</span>
+											<span class="badge badge-muted">[TOOL_14]</span>
+											<span class="badge badge-muted">[TOOL_15]</span>
+											<span class="badge badge-muted">[TOOL_16]</span>
+										</div>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Résultats</h3>
+										<ul class="achievement-list">
+											<li>Ajouter un résultat, un impact, une amélioration ou un apprentissage.</li>
+											<li>Préciser ici un indicateur mesurable ou une réalisation notable.</li>
+											<li>Conserver des formulations courtes et faciles à scanner.</li>
+										</ul>
+									</div>
+
+									<div class="project-detail-section">
+										<h3>Livrables</h3>
+										<!--
+											Tant qu’un livrable n’est pas prêt, laisser le span désactivé.
+											Quand le fichier ou l’URL est prêt, remplacer le span par un lien <a>.
+
+											Exemple fichier local :
+											<a class="deliverable-link" href="assets/docs/nom-du-fichier.pdf" target="_blank" rel="noreferrer noopener">
+
+											Exemple lien externe :
+											<a class="deliverable-link" href="https://example.com/mon-livrable" target="_blank" rel="noreferrer noopener">
+										-->
+										<ul class="deliverables-list">
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="file-text" aria-hidden="true"></i>
+													[DELIVERABLE_10]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="layout" aria-hidden="true"></i>
+													[DELIVERABLE_11]
+												</span>
+											</li>
+											<li>
+												<span class="deliverable-link is-disabled" aria-disabled="true">
+													<i data-lucide="image" aria-hidden="true"></i>
+													[DELIVERABLE_12]
+												</span>
+											</li>
+										</ul>
+									</div>
+								</article>
+							</div>
+						</section>
+
+						<!-- 5. Compétences -->
+						<section class="tab-panel" id="tab-skills" role="tabpanel" aria-labelledby="trigger-skills" hidden tabindex="-1">
+							<div class="section-block compact-top">
+								<h2>Compétences</h2>
+								<p class="lead-text">
+									Classer ici les outils, méthodes et compétences par familles. Chaque item peut contenir
+									un nom d’outil et une phrase courte pour expliquer son usage.
+								</p>
+								<div class="skills-grid">
+									<article class="skill-card">
+										<h3 class="title-with-icon"><i data-lucide="palette" aria-hidden="true"></i>Design d’interface</h3>
+										<ul class="skill-list">
+											<li>
+												<strong>[TOOL_NAME_01]</strong>
+												<span>Indiquer ici à quoi sert cet outil dans le projet ou la méthode de travail.</span>
+											</li>
+											<li>
+												<strong>[TOOL_NAME_02]</strong>
+												<span>Ajouter une phrase simple sur l’usage principal ou la finalité de l’outil.</span>
+											</li>
+											<li>
+												<strong>[METHOD_NAME_01]</strong>
+												<span>Préciser ici une méthode, un livrable ou une pratique liée au design.</span>
+											</li>
+										</ul>
+									</article>
+
+									<article class="skill-card">
+										<h3 class="title-with-icon"><i data-lucide="code-2" aria-hidden="true"></i>Front-end</h3>
+										<ul class="skill-list">
+											<li>
+												<strong>HTML5</strong>
+												<span>Décrire ici le niveau attendu : structure sémantique, accessibilité et intégration.</span>
+											</li>
+											<li>
+												<strong>CSS3</strong>
+												<span>Indiquer la mise en page, le responsive ou le système de composants utilisé.</span>
+											</li>
+											<li>
+												<strong>JavaScript</strong>
+												<span>Présenter ici les interactions ou logiques front-end principales.</span>
+											</li>
+										</ul>
+									</article>
+
+									<article class="skill-card">
+										<h3 class="title-with-icon"><i data-lucide="monitor-smartphone" aria-hidden="true"></i>CMS et publication</h3>
+										<ul class="skill-list">
+											<li>
+												<strong>[CMS_NAME_01]</strong>
+												<span>Expliquer son rôle dans la création, la gestion de contenu ou la maintenance.</span>
+											</li>
+											<li>
+												<strong>[CMS_NAME_02]</strong>
+												<span>Préciser ici le contexte d’utilisation et la finalité pour le client ou le projet.</span>
+											</li>
+											<li>
+												<strong>[SEO_OR_ANALYTICS]</strong>
+												<span>Ajouter une phrase courte sur l’optimisation ou le suivi des performances.</span>
+											</li>
+										</ul>
+									</article>
+
+									<article class="skill-card">
+										<h3 class="title-with-icon"><i data-lucide="megaphone" aria-hidden="true"></i>Communication</h3>
+										<ul class="skill-list">
+											<li>
+												<strong>[CHANNEL_OR_SKILL_01]</strong>
+												<span>Décrire ici un canal, une compétence éditoriale ou un format de contenu.</span>
+											</li>
+											<li>
+												<strong>[CHANNEL_OR_SKILL_02]</strong>
+												<span>Présenter une seconde compétence avec un usage concret et compréhensible.</span>
+											</li>
+											<li>
+												<strong>[CHANNEL_OR_SKILL_03]</strong>
+												<span>Ajouter ici la valeur produite : visibilité, contenu, animation ou cohérence éditoriale.</span>
+											</li>
+										</ul>
+									</article>
+								</div>
+
+								<section class="skills-inline-group skills-inline-group-bordered">
+									<h3 class="title-with-icon"><i data-lucide="binoculars" aria-hidden="true"></i>Veille et méthodes</h3>
+									<div class="badge-row">
+										<span class="badge badge-outline">[TOPIC_01]</span>
+										<span class="badge badge-outline">[TOPIC_02]</span>
+										<span class="badge badge-outline">[METHOD_NAME_01]</span>
+										<span class="badge badge-outline">[METHOD_NAME_02]</span>
+										<span class="badge badge-outline">[TOOLWATCH_01]</span>
+										<span class="badge badge-outline">[PRACTICE_01]</span>
+									</div>
+								</section>
+
+								<div class="skills-double-row">
+									<section class="skills-inline-group">
+										<h3 class="title-with-icon"><i data-lucide="users" aria-hidden="true"></i>Soft skills</h3>
+										<div class="badge-row">
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_01]</span>
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_02]</span>
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_03]</span>
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_04]</span>
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_05]</span>
+											<span class="badge badge-outline soft-secondary">[SOFT_SKILL_06]</span>
+										</div>
+									</section>
+
+									<section class="skills-inline-group">
+										<h3 class="title-with-icon"><i data-lucide="lightbulb" aria-hidden="true"></i>Compétences transférables</h3>
+										<div class="badge-row">
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_01]</span>
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_02]</span>
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_03]</span>
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_04]</span>
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_05]</span>
+											<span class="badge badge-outline soft-tertiary">[TRANSFERABLE_SKILL_06]</span>
+										</div>
+									</section>
+								</div>
+							</div>
+						</section>
+
+						<!-- 6. Parcours -->
+						<section class="tab-panel" id="tab-journey" role="tabpanel" aria-labelledby="trigger-journey" hidden tabindex="-1">
+							<div class="section-block compact-top">
+								<h2>Parcours</h2>
+
+								<section class="journey-block">
+									<h3 class="title-with-icon"><i data-lucide="briefcase" aria-hidden="true"></i>Expériences</h3>
+									<div class="experience-list">
+										<article class="experience-card">
+											<div class="experience-head">
+												<div>
+													<h4>[EXPERIENCE_TITLE_01]</h4>
+													<p class="location-line">
+														<i data-lucide="map-pin" aria-hidden="true"></i>
+														<span>[ORGANIZATION_01] · [CITY_01], [REGION_01]</span>
+													</p>
+												</div>
+												<span class="badge badge-outline tiny">[DATE_RANGE_01]</span>
+											</div>
+											<ul class="mission-list">
+												<li>Décrire ici 2 à 3 missions, responsabilités ou réalisations principales.</li>
+												<li>Mettre en avant les tâches concrètes et les outils mobilisés.</li>
+												<li>Ajouter si possible un résultat, une compétence développée ou un impact.</li>
+											</ul>
+										</article>
+
+										<article class="experience-card">
+											<div class="experience-head">
+												<div>
+													<h4>[EXPERIENCE_TITLE_02]</h4>
+													<p class="location-line">
+														<i data-lucide="map-pin" aria-hidden="true"></i>
+														<span>[ORGANIZATION_02] · [CITY_02], [REGION_02]</span>
+													</p>
+												</div>
+												<span class="badge badge-outline tiny">[DATE_RANGE_02]</span>
+											</div>
+											<ul class="mission-list">
+												<li>Présenter ici un second bloc d’expérience avec un format identique.</li>
+												<li>Conserver des phrases courtes et directement compréhensibles.</li>
+												<li>Mettre l’accent sur l’essentiel pour une lecture rapide.</li>
+											</ul>
+										</article>
+
+										<article class="experience-card">
+											<div class="experience-head">
+												<div>
+													<h4>[EXPERIENCE_TITLE_03]</h4>
+													<p class="location-line">
+														<i data-lucide="map-pin" aria-hidden="true"></i>
+														<span>[ORGANIZATION_03] · [CITY_03], [REGION_03]</span>
+													</p>
+												</div>
+												<span class="badge badge-outline tiny">[DATE_RANGE_03]</span>
+											</div>
+											<ul class="mission-list">
+												<li>Ajouter ici une troisième expérience, un projet long ou une activité bénévole.</li>
+												<li>Garder le même niveau de détail pour l’ensemble de la page.</li>
+												<li>Conserver une formulation claire, neutre et orientée action.</li>
+											</ul>
+										</article>
+									</div>
+								</section>
+
+								<section class="journey-block education-section">
+									<h3 class="title-with-icon"><i data-lucide="graduation-cap" aria-hidden="true"></i>Formation</h3>
+									<div class="timeline">
+										<article class="timeline-item">
+											<div class="timeline-dot"></div>
+											<div class="timeline-body">
+												<div class="timeline-head">
+													<div>
+														<h4>[DEGREE_OR_TRAINING_01]</h4>
+														<p class="location-line">
+															<i data-lucide="map-pin" aria-hidden="true"></i>
+															<span>[SCHOOL_01] · [CITY_04], [REGION_04]</span>
+														</p>
+													</div>
+													<span class="badge badge-outline soft-secondary">[DATE_RANGE_04]</span>
+												</div>
+												<p>Résumer ici la formation, la spécialisation ou les acquis principaux.</p>
+											</div>
+										</article>
+
+										<article class="timeline-item">
+											<div class="timeline-dot"></div>
+											<div class="timeline-body">
+												<div class="timeline-head">
+													<div>
+														<h4>[DEGREE_OR_TRAINING_02]</h4>
+														<p class="location-line">
+															<i data-lucide="map-pin" aria-hidden="true"></i>
+															<span>[SCHOOL_02] · [CITY_05], [REGION_05]</span>
+														</p>
+													</div>
+													<span class="badge badge-outline soft-secondary">[DATE_RANGE_05]</span>
+												</div>
+												<p>Résumer ici une deuxième formation, un parcours complémentaire ou une spécialisation.</p>
+											</div>
+										</article>
+
+										<article class="timeline-item">
+											<div class="timeline-dot"></div>
+											<div class="timeline-body">
+												<div class="timeline-head">
+													<div>
+														<h4>[DEGREE_OR_TRAINING_03]</h4>
+														<p class="location-line">
+															<i data-lucide="map-pin" aria-hidden="true"></i>
+															<span>[SCHOOL_03] · [CITY_06], [REGION_06]</span>
+														</p>
+													</div>
+													<span class="badge badge-outline soft-secondary">[DATE_RANGE_06]</span>
+												</div>
+												<p>Ajouter ici une troisième formation pour compléter le parcours académique ou professionnel.</p>
+											</div>
+										</article>
+
+										<article class="timeline-item">
+											<div class="timeline-dot"></div>
+											<div class="timeline-body">
+												<div class="timeline-head">
+													<div>
+														<h4>[CERTIFICATION_OR_TRAINING_04]</h4>
+													</div>
+													<span class="badge badge-outline soft-secondary">[DATE_RANGE_07]</span>
+												</div>
+												<p>Ajouter ici une certification, une formation courte ou un apprentissage complémentaire.</p>
+											</div>
+										</article>
+									</div>
+								</section>
+							</div>
+						</section>
+
+						<!-- 7. Contact -->
+						<section class="tab-panel" id="tab-contact" role="tabpanel" aria-labelledby="trigger-contact" hidden tabindex="-1">
+							<div class="section-block compact-top">
+								<h2>Contact</h2>
+								<p class="lead-text">
+									Remplacer ici les liens et informations de contact par des coordonnées réelles.
+								</p>
+
+								<section class="contact-card">
+									<h3>Liens et coordonnées</h3>
+									<div class="contact-links-grid">
+										<a class="contact-link-card" href="mailto:email@example.com">
+											<i data-lucide="mail" aria-hidden="true"></i>
+											<div>
+												<h4>Email</h4>
+												<p>email@example.com</p>
+											</div>
+										</a>
+										<a class="contact-link-card" href="https://linkedin.com/in/username" target="_blank" rel="noreferrer noopener">
+											<i data-lucide="linkedin" aria-hidden="true"></i>
+											<div>
+												<h4>LinkedIn</h4>
+												<p>linkedin.com/in/username</p>
+											</div>
+										</a>
+										<a class="contact-link-card" href="https://github.com/username" target="_blank" rel="noreferrer noopener">
+											<i data-lucide="github" aria-hidden="true"></i>
+											<div>
+												<h4>GitHub</h4>
+												<p>github.com/username</p>
+											</div>
+										</a>
+										<a class="contact-link-card" href="https://example.com" target="_blank" rel="noreferrer noopener">
+											<i data-lucide="globe" aria-hidden="true"></i>
+											<div>
+												<h4>Site web</h4>
+												<p>https://example.com</p>
+											</div>
+										</a>
+									</div>
+								</section>
+
+								<section class="map-section" aria-labelledby="map-title">
+									<h3 class="title-with-icon" id="map-title"><i data-lucide="map" aria-hidden="true"></i>Localisation</h3>
+									<p class="map-text">
+										Mettre ici une localisation générale ou une zone d’intervention. Le point affiché peut être
+										adapté dans le fichier JavaScript selon la ville souhaitée. Par défaut, la carte est initialisée
+										sur Paris.
+									</p>
+									<div id="map" class="map-box"></div>
+									<noscript>
+										<p class="map-fallback" role="status">Localisation générale : Paris. Remplacer ce texte par la ville ou la zone souhaitée si nécessaire.</p>
+									</noscript>
+									<p id="mapFallback" class="map-fallback hidden" role="status"></p>
+								</section>
+							</div>
+						</section>
+					</div>
+				</div>
+			</div>
+			<footer class="site-footer" aria-label="Crédits du template">
+				<p>© [YEAR] <a href="https://example.com" target="_blank" rel="noreferrer noopener">[SITE_OWNER]</a></p>
+			</footer>
+		</div>
+	</main>
+
+	<script src="https://unpkg.com/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+</html>
